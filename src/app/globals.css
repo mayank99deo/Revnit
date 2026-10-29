@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/*
+ * Neutral base with colour taken from electrical practice: the R-Y-B phase
+ * colours, earth green, and blueprint navy for drawings. Tailwind's default
+ * palette is removed so only these are available.
+ */
+@theme {
+  --color-*: initial;
+  --color-ink: #0e1116;
+  --color-paper: #ffffff;
+  --color-graphite: #586070;
+  --color-trace: #98a0ad;
+  --color-edge: #dce1e8;
+  --color-rule: #e9ecf1;
+  --color-wash: #f4f6f9;
+
+  /* Drawings: navy linework on blueprint paper. */
+  --color-blueprint: #f1f5fb;
+  --color-gridline: #e2eaf6;
+  --color-line: #22406f;
+
+  /* B phase: actions, links, selection. */
+  --color-blue: #1f5fd6;
+  --color-blue-deep: #164aae;
+  --color-blue-soft: #e9f0fd;
+  /* R phase: alerts and unread. */
+  --color-red: #d63a2f;
+  --color-red-soft: #fcebe9;
+  /* Y phase: exclusive families, like a panel warning label. */
+  --color-yellow: #f4b400;
+  --color-yellow-soft: #fff5d1;
+  --color-yellow-ink: #7a5600;
+  /* Earth: free, published, done. */
+  --color-green: #13865a;
+  --color-green-soft: #e5f4ec;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+
+  --text-display: 4.25rem;
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.03em;
+
+  --animate-draw: draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+  --animate-rise: rise 0.18s ease-out both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: var(--length, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Archivo's width axis: expanded cuts for headings, like equipment nameplates. */
+@utility wide {
+  font-stretch: 125%;
+}
+
+@utility semiwide {
+  font-stretch: 112%;
+}
+
+/* Exclusive families carry yellow and black hazard tape, as on a live panel. */
+@utility hatch {
+  background-image: repeating-linear-gradient(135deg, var(--color-ink) 0 6px, var(--color-yellow) 6px 12px);
+}
+
+/* The three phase colours, used as a thin band at the top of the header and footer. */
+@utility phase-stripe {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-red) 0 33.33%,
+    var(--color-yellow) 33.33% 66.66%,
+    var(--color-blue) 66.66%
+  );
+}
+
+/* Drafting grid behind drawings and the hero diagram. */
+@utility blueprint-grid {
+  background-color: var(--color-blueprint);
+  background-image:
+    linear-gradient(var(--color-gridline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-gridline) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-blue-soft);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-lg border px-5 text-[15px] font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply border-blue bg-blue text-paper hover:border-blue-deep hover:bg-blue-deep;
+  }
+  .btn-secondary {
+    @apply border-edge bg-paper text-ink hover:border-blue hover:text-blue;
+  }
+  .btn-dark {
+    @apply border-ink bg-ink text-paper hover:bg-paper hover:text-ink;
+  }
+  .btn-quiet {
+    @apply border-transparent px-3 text-graphite hover:text-ink;
+  }
+  .btn-sm {
+    @apply h-9 px-3.5 text-sm;
+  }
+
+  .field {
+    @apply block w-full rounded-lg border border-edge bg-paper px-3 py-2.5 text-[15px] transition-colors placeholder:text-trace hover:border-trace focus:border-blue focus:ring-4 focus:ring-blue-soft focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium;
+  }
+
+  .link {
+    @apply text-blue underline decoration-1 underline-offset-[3px] hover:decoration-2;
+  }
+
+  .panel {
+    @apply rounded-xl border border-edge bg-paper;
+  }
+
+  .tag {
+    @apply inline-flex h-6 items-center gap-1.5 rounded-md px-2 text-[13px] font-semibold whitespace-nowrap;
+  }
+
+  .shell {
+    @apply mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-10;
+  }
+}
