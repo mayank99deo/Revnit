@@ -21,8 +21,10 @@ export function SignInForm({ next }: { next: string }) {
       setState("error");
       setMessage(
         error.status === 429
-          ? "Too many links requested. Wait a minute and try again."
-          : "The link wasn't sent. Check the address and try again.",
+          ? "Too many links requested. Wait a minute and try again, or continue with Google."
+          : error.status === 400 && /email/i.test(error.message) && /invalid/i.test(error.message)
+            ? "That email address doesn't look right. Check it and try again."
+            : "We couldn't send the email right now. Continue with Google instead, or try again later.",
       );
       return;
     }

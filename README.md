@@ -16,7 +16,7 @@ With no environment variables the site runs read-only on a bundled sample catalo
 ## Connect Supabase
 
 1. Create a project at [supabase.com](https://supabase.com). Choose the Mumbai region if most buyers are in India.
-2. Set up the database. The quickest way is one paste: run `npm run -s db:sql | pbcopy` (macOS), paste into **SQL Editor → New query**, and press **Run**. That's the four migrations plus the categories, in order.
+2. Set up the database. The quickest way is one paste: run `npm run db:sql`, open the `supabase/setup.sql` it writes, copy all of it, paste into **SQL Editor → New query**, and press **Run**. That file is the four migrations plus the categories, in order.
 
    Or run these files one at a time, in order:
    1. `supabase/migrations/0001_schema.sql`
@@ -27,10 +27,11 @@ With no environment variables the site runs read-only on a bundled sample catalo
 
    With the Supabase CLI, `supabase db push` runs the migrations for you.
    `supabase/seed-demo.sql` loads the sample families for a staging project. Its files are placeholders, so don't run it in production.
-3. **Authentication → URL Configuration**: set Site URL to your domain. Add `http://localhost:3000/auth/callback` and `https://<your-domain>/auth/callback` to Redirect URLs.
-4. **Authentication → Providers → Google** (optional): add a Google OAuth client. Email sign-in links work without it.
-5. Copy `.env.example` to `.env.local` and fill in the three Supabase values from **Project Settings → API**.
-6. Sign in once with Nitish's email, then make that account the admin:
+3. **Authentication → URL Configuration**: set Site URL to your domain. Add `https://<your-domain>/**` and `http://localhost:3000/**` to Redirect URLs (the wildcard covers `/auth/callback` with its return path).
+4. **Authentication → Sign In / Providers → Google**: in [Google Cloud Console](https://console.cloud.google.com/apis/credentials) create an OAuth client (type Web application) with the authorised redirect URI `https://<project-ref>.supabase.co/auth/v1/callback`, then paste its client ID and secret here and enable the provider.
+5. **Authentication → Emails → SMTP Settings**: connect a real sender such as [Resend](https://resend.com). Supabase's built-in sender only delivers to your own team, a few emails an hour, so sign-in links won't reach the public without this. Google sign-in works either way.
+6. Copy `.env.example` to `.env.local` and fill in the three Supabase values from **Project Settings → API**.
+7. Sign in once with Nitish's email, then make that account the admin:
 
    ```sql
    update public.profiles set role = 'admin' where email = 'nitish@example.com';
@@ -63,7 +64,9 @@ Without it, the same messages still appear on their notifications page and as a 
 
 ## Deploy
 
-Push to GitHub and import the repository in [Vercel](https://vercel.com). Add every variable from `.env.example` in the project's settings, with `NEXT_PUBLIC_SITE_URL` set to the production domain. Then add that domain's `/auth/callback` to Supabase's redirect URLs and set up the Razorpay webhook.
+Push to GitHub and import the repository in [Vercel](https://vercel.com). Connecting Supabase through Vercel's Supabase integration sets the database and Supabase variables for you; add the Razorpay and Resend ones yourself. `NEXT_PUBLIC_SITE_URL` is only needed for a custom domain: on Vercel the production domain is detected.
+
+Every build first runs `scripts/migrate.mjs`, which applies any SQL files in `supabase/migrations` the database hasn't had yet (each once, in a transaction) and refreshes the categories. Shipping a schema change is just adding a numbered file and deploying. A failing migration fails the build, so the site never runs against a half-migrated database. Locally, `npm run db:migrate` does the same using `DATABASE_URL` from `.env.local`.
 
 ## How Nitish publishes a family
 

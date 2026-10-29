@@ -26,9 +26,11 @@ export default async function SignInPage({ searchParams }: Props) {
             ? "Free families need a free account. Your download starts as soon as you’re back."
             : "One account for free downloads, purchases and requests."}
         </p>
-        {error === "link" && (
-          <p role="alert" className="mt-6 rounded-xl border border-edge p-4 text-[15px]">
-            That sign-in link has expired or was already used. Request a new one below.
+        {error && (
+          <p role="alert" className="mt-6 rounded-xl bg-red-soft p-4 text-[15px] text-red">
+            {error === "provider"
+              ? "Google sign-in didn’t finish. Try again, or use your email instead."
+              : "That sign-in link has expired or was already used. Request a new one below."}
           </p>
         )}
         <div className="mt-8">

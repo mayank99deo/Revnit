@@ -8,6 +8,11 @@ export async function GET(request: NextRequest) {
   const next = safeNext(searchParams.get("next"));
   const supabase = await createClient();
 
+  // Google sends ?error=access_denied when the visitor cancels on its consent screen.
+  if (searchParams.get("error")) {
+    return NextResponse.redirect(new URL(`/sign-in?error=provider&next=${encodeURIComponent(next)}`, request.url));
+  }
+
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
@@ -18,7 +23,7 @@ export async function GET(request: NextRequest) {
       ? await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
       : { error: new Error("missing_code") };
 
-  if (error) return NextResponse.redirect(new URL("/sign-in?error=link", request.url));
+  if (error) return NextResponse.redirect(new URL(`/sign-in?error=link&next=${encodeURIComponent(next)}`, request.url));
   return NextResponse.redirect(new URL(next, request.url));
 }
 
