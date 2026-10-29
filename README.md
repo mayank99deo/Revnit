@@ -16,7 +16,9 @@ With no environment variables the site runs read-only on a bundled sample catalo
 ## Connect Supabase
 
 1. Create a project at [supabase.com](https://supabase.com). Choose the Mumbai region if most buyers are in India.
-2. In **SQL Editor**, run these files in order:
+2. Set up the database. The quickest way is one paste: run `npm run -s db:sql | pbcopy` (macOS), paste into **SQL Editor → New query**, and press **Run**. That's the four migrations plus the categories, in order.
+
+   Or run these files one at a time, in order:
    1. `supabase/migrations/0001_schema.sql`
    2. `supabase/migrations/0002_functions.sql`
    3. `supabase/migrations/0003_policies.sql`
@@ -35,6 +37,8 @@ With no environment variables the site runs read-only on a bundled sample catalo
    ```
 
    The **Studio** link then appears in his account menu.
+
+If the deployed site fails with `Could not find the table 'public.requests'` or `Could not find the function public.search_families` in Vercel's logs, the database hasn't been set up: run step 2 against the same Supabase project whose URL is in Vercel's environment variables.
 
 File size: Supabase's free plan caps uploads at 50 MB per file. Most `.rfa` files are well under that. The Pro plan raises it to the 500 MB the bucket allows.
 

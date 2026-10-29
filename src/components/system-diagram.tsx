@@ -286,7 +286,9 @@ export function SystemDiagram({ categories }: { categories: CategoryWithCount[] 
           <div key={current.slug} className="animate-rise">
             <h2 className="wide text-2xl leading-tight font-bold tracking-[-0.02em]">{current.name}</h2>
             <p className="mt-3 text-[15px] leading-relaxed text-graphite">{current.description}</p>
-            <p className="tag mt-5 bg-blue-soft text-blue-deep">{pluralize(current.family_count, "family", "families")}</p>
+            <p className="tag mt-5 bg-blue-soft text-blue-deep">
+              {current.family_count ? pluralize(current.family_count, "family", "families") : "First families coming soon"}
+            </p>
           </div>
         ) : (
           <div>

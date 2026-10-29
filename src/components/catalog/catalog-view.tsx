@@ -256,12 +256,18 @@ function NoResults({ query, categoryName }: { query: CatalogQuery; categoryName?
   return (
     <div className="blueprint-grid rounded-2xl border border-edge p-8 md:p-12">
       <h2 className="wide text-2xl font-bold tracking-[-0.02em]">
-        {query.q ? `Nothing matches “${query.q}” yet` : "No families match these filters"}
+        {query.q
+          ? `Nothing matches “${query.q}” yet`
+          : query.price || query.revit
+            ? "No families match these filters"
+            : `No ${categoryName ? `${categoryName.toLowerCase()} ` : ""}families published yet`}
       </h2>
       <p className="mt-3 max-w-xl leading-relaxed text-graphite">
         {query.q
           ? "This search has been noted. Request the family and you’ll be notified when it’s published. The more people ask, the sooner it gets modelled."
-          : "Remove a filter to see more, or request the family you were looking for."}
+          : query.price || query.revit
+            ? "Remove a filter to see more, or request the family you were looking for."
+            : "Request the family you need and you’ll be notified when it’s published. Requests with the most votes are modelled first."}
       </p>
       <div className="mt-7 flex flex-wrap gap-3">
         <Link href={`/requests?title=${encodeURIComponent(wanted)}#new`} className="btn btn-primary">

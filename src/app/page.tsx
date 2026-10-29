@@ -28,8 +28,9 @@ export default async function HomePage() {
             {site.tagline}
           </h1>
           <p className="max-w-md text-lg leading-relaxed text-graphite lg:pb-2">
-            {formatCount(familyCount)} families for lighting, power distribution, containment and fire alarm. Parametric
-            types, working electrical connectors and a file for each Revit release they support.
+            {familyCount > 0 ? `${formatCount(familyCount)} families` : "Families"} for lighting, power distribution,
+            containment and fire alarm. Parametric types, working electrical connectors and a file for each Revit release
+            they support.
           </p>
         </div>
         <div className="mt-10 max-w-3xl">
@@ -40,41 +41,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="shell mt-20" aria-labelledby="new-heading">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <h2 id="new-heading" className="wide text-[28px] leading-tight font-bold tracking-[-0.02em]">
-            Recently published
-          </h2>
-          <Link href="/families?sort=new" className="link shrink-0 text-[15px] font-medium">
-            All new families
-          </Link>
-        </div>
-        <FamilyGrid families={newest.items.slice(0, 4)} owned={owned} />
-      </section>
-
-      <section className="shell mt-20 grid gap-14 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <div className="mb-5 flex items-end justify-between gap-4 border-b border-edge pb-3">
-            <h2 className="wide text-[28px] leading-tight font-bold tracking-[-0.02em]">Most downloaded</h2>
-            <Link href="/families?sort=popular" className="link shrink-0 text-[15px] font-medium">
-              See ranking
+      {newest.items.length > 0 && (
+        <section className="shell mt-20" aria-labelledby="new-heading">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <h2 id="new-heading" className="wide text-[28px] leading-tight font-bold tracking-[-0.02em]">
+              Recently published
+            </h2>
+            <Link href="/families?sort=new" className="link shrink-0 text-[15px] font-medium">
+              All new families
             </Link>
           </div>
-          <ol>
-            {popular.items.slice(0, 6).map((family, i) => (
-              <li key={family.id} className="border-b border-rule">
-                <Link href={`/families/${family.slug}`} className="group flex items-baseline gap-5 py-3.5">
-                  <span className="w-6 shrink-0 text-right text-[15px] text-graphite">{i + 1}</span>
-                  <span className="flex-1 font-medium group-hover:text-blue">{family.name}</span>
-                  <span className="shrink-0 text-[13px] text-graphite">{formatCount(family.downloads_count)}</span>
-                  <span className="flex w-24 shrink-0 justify-end">
-                    <AccessTag paid={family.price_paise > 0} />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </div>
+          <FamilyGrid families={newest.items.slice(0, 4)} owned={owned} />
+        </section>
+      )}
+
+      <section className={`shell mt-20 grid gap-14 lg:gap-16 ${popular.items.length > 0 ? "lg:grid-cols-2" : ""}`}>
+        {popular.items.length > 0 && (
+          <div>
+            <div className="mb-5 flex items-end justify-between gap-4 border-b border-edge pb-3">
+              <h2 className="wide text-[28px] leading-tight font-bold tracking-[-0.02em]">Most downloaded</h2>
+              <Link href="/families?sort=popular" className="link shrink-0 text-[15px] font-medium">
+                See ranking
+              </Link>
+            </div>
+            <ol>
+              {popular.items.slice(0, 6).map((family, i) => (
+                <li key={family.id} className="border-b border-rule">
+                  <Link href={`/families/${family.slug}`} className="group flex items-baseline gap-5 py-3.5">
+                    <span className="w-6 shrink-0 text-right text-[15px] text-graphite">{i + 1}</span>
+                    <span className="flex-1 font-medium group-hover:text-blue">{family.name}</span>
+                    <span className="shrink-0 text-[13px] text-graphite">{formatCount(family.downloads_count)}</span>
+                    <span className="flex w-24 shrink-0 justify-end">
+                      <AccessTag paid={family.price_paise > 0} />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
 
         <div>
           <div className="mb-5 flex items-end justify-between gap-4 border-b border-edge pb-3">
@@ -83,6 +88,11 @@ export default async function HomePage() {
               Request board
             </Link>
           </div>
+          {requests.length === 0 && (
+            <p className="rounded-xl bg-wash p-5 text-[15px] text-graphite">
+              No requests yet. Be the first to ask for the family you can’t find anywhere else.
+            </p>
+          )}
           <ul>
             {requests.slice(0, 5).map((request) => (
               <li key={request.id} className="flex items-center gap-4 border-b border-rule py-3">

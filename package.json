@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "seed:demo": "node scripts/generate-demo-seed.ts",
-    "test:db": "node scripts/test-database.mjs"
+    "test:db": "node scripts/test-database.mjs",
+    "db:sql": "cat supabase/migrations/*.sql supabase/seed.sql && echo \"notify pgrst, 'reload schema';\""
   },
   "engines": {
     "node": ">=22.6"
